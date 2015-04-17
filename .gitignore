@@ -1,0 +1,5 @@
+*.dSYM
+*.o
+*.bin
+.DS_Store
+tags
