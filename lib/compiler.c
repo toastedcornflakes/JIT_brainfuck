@@ -103,9 +103,7 @@ void jit_run(unsigned char *command, size_t size) {
 		}
 		else if (*cur_command == ']') {
 			// TODO: check if stack is empty, which means
-			if(stack_empty(jumpback_stack)) {
-				log_err("Mismatched '[' / ']' in input");
-			}
+			check(!stack_empty(jumpback_stack), "Mismatched '[' or ']' in input");
 
 
 			// jump is implemented in the form of jmp [RIP + const]
