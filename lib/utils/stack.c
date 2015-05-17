@@ -23,17 +23,17 @@ error:
 
 static void stack_grow(stack *s) {
 	s->size = 2 * s->size + 1;
-	s->el = realloc(s->el, s->size);
+	s->el = realloc(s->el, s->size * s->element_size);
 }
 
 static void stack_shrink(stack *s) {
 	s->size = s->size / 2;
 	assert(s->size >= s->used_size);
-	s->el = realloc(s->el, s->size);
+	s->el = realloc(s->el, s->size * s->element_size);
 }
 
 void stack_push(stack *s, void *elem) {
-	if(s->size < s->used_size) {
+	if(s->size <= s->used_size) {
 		stack_grow(s);
 	}
 	void *above_top = s->el  + s->used_size * s->element_size;
