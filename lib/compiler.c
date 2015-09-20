@@ -80,7 +80,7 @@ size_t compute_machine_code_size(unsigned char *command, size_t command_size) {
 		}
 		else {
 			size_t tmp = 0;
-			code_for_instruction(*cur_command, &dummy, &tmp);
+			code_for_instruction(*cur_command, (void*)&dummy, &tmp);
 			size += tmp;
 		}
 	}
