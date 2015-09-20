@@ -125,9 +125,7 @@ void jit_run(unsigned char *command, size_t command_size) {
 			stack_push(jumpback_stack, &next_ins);
 		}
 		else if (*cur_command == ']') {
-			// TODO: check if stack is empty, which means
 			check(!stack_empty(jumpback_stack), "Mismatched '[' or ']' in input");
-
 
 			// jump is implemented in the form of jmp [RIP + const]
 			unsigned char *addr;
