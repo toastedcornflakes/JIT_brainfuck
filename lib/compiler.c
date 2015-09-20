@@ -66,14 +66,37 @@ static void code_for_instruction(unsigned char instruction, unsigned char **code
 	}
 }
 
+// TODO: refactor the code generation process to be instruction type agnostic
+size_t compute_machine_code_size(unsigned char *command, size_t command_size) {
+	size_t size = 3; // size for setting up rdx + ret
+	unsigned char dummy[64];
+	
+	for (unsigned char *cur_command = command;  cur_command < command + command_size; cur_command++) {
+		if (*cur_command == '[') {
+			size += 5;
+		}
+		else if (*cur_command == ']') {
+			size += 9;
+		}
+		else {
+			size_t tmp = 0;
+			code_for_instruction(*cur_command, &dummy, &tmp);
+			size += tmp;
+		}
+	}
+	return size;
+}
+
+
 /* This function compiles and execute the `size` brainfucks instructions in `command`
 */
-void jit_run(unsigned char *command, size_t size) {
+void jit_run(unsigned char *command, size_t command_size) {
 	// create the data space of the program
 	unsigned char *begin_cells = calloc(1, PLAYGROUND_CELLS);
 	check_mem(begin_cells);
 	
-	unsigned char *big_chunk = alloc_executable_memory(4096 * 2);
+	size_t code_size = compute_machine_code_size(command, command_size);
+	unsigned char *big_chunk = alloc_executable_memory(code_size);
 	unsigned char *code = big_chunk;
 
 	// add code to set rdx to address of playground
@@ -85,7 +108,7 @@ void jit_run(unsigned char *command, size_t size) {
 
 	stack *jumpback_stack = stack_create(sizeof(unsigned char*));
 
-	for (unsigned char *cur_command = command;  cur_command < command + size; cur_command++) {
+	for (unsigned char *cur_command = command;  cur_command < command + command_size; cur_command++) {
 		//debug("decoding command #%d", ++n);
 		unsigned char *ins_code = NULL;
 		size_t size;
@@ -119,7 +142,6 @@ void jit_run(unsigned char *command, size_t size) {
 			memcpy(&base[5], &jump_offset,4);
 
 			ins_code = base;
-
 
 			// now we also need to make the previous [ unconditionnaly jump here
 			// just putting the current address there, relatively speaking
