@@ -1,6 +1,6 @@
 `jit_brainfuck`
 ==============
-A JIT compiler for brainfuck on x86_64
+A JIT compiler for brainfuck on x86_64. Its internals and an introduction to brainfuck are available on [my website](https://toastedcornflakes.github.io/articles/jit-brainfuck.html).
 
 How to run:
 ----------
